@@ -36,9 +36,10 @@ public class LandTest {
 
         exception.expect(TerrainNonRepertorieException.class);
         land = Land.getLandByOrdinal(5);
+        land = Land.getLandByOrdinal(-5);
     }
 
-    public void testCountLand() throws Exception {
+    public void testCountLand() {
         Assert.assertEquals("Retourne la taille de l'enum land (5)", 5, Land.CountLand());
     }
 }
