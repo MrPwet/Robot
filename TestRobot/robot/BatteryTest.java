@@ -21,7 +21,7 @@ public class BatteryTest {
     }
 
     @Test
-    public void canDeliverTest() {
+    public void testCanDeliver() {
         Battery batTest = new Battery();
 
         Assert.assertEquals(batTest.canDeliver(100), true);
@@ -29,7 +29,7 @@ public class BatteryTest {
     }
 
     @Test
-    public void setUpTest() throws Exception {
+    public void testSetUp() throws Exception {
         Battery batTest = new Battery();
 
         batTest.setUp();
@@ -40,7 +40,7 @@ public class BatteryTest {
     }
 
     @Test
-    public void chargeTest() {
+    public void testCharge() {
         Battery batTest = new Battery();
 
         batTest.charge();
@@ -48,7 +48,7 @@ public class BatteryTest {
     }
 
     @Test(expected = InsufficientChargeException.class)
-    public void useTest() throws InsufficientChargeException {
+    public void testUse() throws InsufficientChargeException {
         Battery batTest = new Battery();
 
         batTest.use(20);
