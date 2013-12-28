@@ -79,4 +79,18 @@ public class LandSensorTest {
         Assert.assertEquals(1.5, result, 0);
     }
 
+    @Test
+    public void chemin6GPTPEC() throws Exception {
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+        double result;
+        Coordinates start = new Coordinates(2,2);
+        Coordinates dest = new Coordinates(2,3);
+
+        when(random.nextInt(anyInt())).thenReturn(1,2);
+        ls.getPointToPointEnergyCoefficient(start,start);
+        result = ls.getPointToPointEnergyCoefficient(start, dest);
+        Assert.assertEquals(3, result, 0);
+    }
+
 }
