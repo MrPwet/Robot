@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Random;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -86,7 +86,7 @@ public class RobotTest {
         c3po.moveForward();
     }
 
-    //Test moveForward
+    //Test moveBackward
     @Test
     public void TestMoveBackward() throws UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
         Robot r2d2 = new Robot();
@@ -103,6 +103,40 @@ public class RobotTest {
 
         exception.expect(UnlandedRobotException.class);
         c3po.moveBackward();
+    }
+
+    //Test LetsGo
+    @Test
+    public void TestLetsGo1() throws UnlandedRobotException, UndefinedRoadbookException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
+        Robot r2d2 = new Robot();
+
+        exception.expect(UndefinedRoadbookException.class);
+        r2d2.letsGo();
+    }
+
+    @Test
+    public void TestLetsGo2() throws UnlandedRobotException, UndefinedRoadbookException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
+        Robot r2d2 = new Robot();
+        List<Instruction> lst = new ArrayList<Instruction>();
+        lst.add(Instruction.FORWARD);
+        lst.add(Instruction.TURNRIGHT);
+        lst.add(Instruction.FORWARD);
+        lst.add(Instruction.TURNLEFT);
+        lst.add(Instruction.FORWARD);
+        lst.add(Instruction.TURNLEFT);
+        lst.add(Instruction.BACKWARD);
+        RoadBook rb = new RoadBook(lst);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        when(random.nextInt(anyInt())).thenReturn(0);
+        r2d2.setRoadBook(rb);
+        r2d2.land(new Coordinates(5,5), ls);
+        r2d2.letsGo();
+        Assert.assertEquals(7, r2d2.getXposition(),0);
+        Assert.assertEquals(3, r2d2.getYposition(),0);
+        Assert.assertEquals(Direction.WEST, r2d2.getDirection());
+
     }
 
 
