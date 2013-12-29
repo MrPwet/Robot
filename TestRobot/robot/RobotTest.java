@@ -7,6 +7,8 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Random;
 
+import static org.mockito.Mockito.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: MrPwet
@@ -64,5 +66,44 @@ public class RobotTest {
         dir = c3po.getDirection();
         Assert.assertEquals(Direction.NORTH, dir);
     }
+
+    //Test moveForward
+    @Test
+    public void TestMoveForward() throws UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
+        Robot r2d2 = new Robot();
+        Robot c3po = new Robot();
+        Coordinates start = new Coordinates(5,5);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        when(random.nextInt(anyInt())).thenReturn(0);
+        r2d2.land(start,ls);
+        r2d2.moveForward();
+        Assert.assertEquals("On devrait être en 4", 4, r2d2.getYposition(), 0);
+        Assert.assertEquals("Pas bougé", 5, r2d2.getXposition(), 0);
+
+        exception.expect(UnlandedRobotException.class);
+        c3po.moveForward();
+    }
+
+    //Test moveForward
+    @Test
+    public void TestMoveBackward() throws UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
+        Robot r2d2 = new Robot();
+        Robot c3po = new Robot();
+        Coordinates start = new Coordinates(5,5);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        when(random.nextInt(anyInt())).thenReturn(0);
+        r2d2.land(start,ls);
+        r2d2.moveBackward();
+        Assert.assertEquals("On devrait être en 4", 6, r2d2.getYposition(), 0);
+        Assert.assertEquals("Pas bougé", 5, r2d2.getXposition(), 0);
+
+        exception.expect(UnlandedRobotException.class);
+        c3po.moveBackward();
+    }
+
 
 }
