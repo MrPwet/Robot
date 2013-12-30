@@ -1,5 +1,6 @@
 package robot;
 import org.junit.*;
+import org.junit.rules.ExpectedException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,6 +10,9 @@ import org.junit.*;
  * To change this template use File | Settings | File Templates.
  */
 public class BatteryTest {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void testTimeToSufficientCharge() throws Exception {
@@ -47,13 +51,15 @@ public class BatteryTest {
         Assert.assertEquals(110, batTest.getChargeLevel() , 0);
     }
 
-    @Test(expected = InsufficientChargeException.class)
+    @Test
     public void testUse() throws InsufficientChargeException {
         Battery batTest = new Battery();
 
         batTest.use(20);
         Assert.assertEquals(80, batTest.getChargeLevel(), 0);
+
+        exception.expect(InsufficientChargeException.class);
         batTest.use(9000);
-        /* throws InsufficientChargeException */
+
     }
 }
