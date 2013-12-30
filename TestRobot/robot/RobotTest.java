@@ -139,5 +139,92 @@ public class RobotTest {
 
     }
 
+    //Test turnLeft and turnRight
+
+    @Test
+    public void TestTurnLeft1() throws UnlandedRobotException {
+        Robot r2d2 = new Robot();
+
+        exception.expect(UnlandedRobotException.class);
+        r2d2.turnLeft();
+    }
+
+    @Test
+    public void TestTurnRight1() throws UnlandedRobotException {
+        Robot r2d2 = new Robot();
+
+        exception.expect(UnlandedRobotException.class);
+        r2d2.turnRight();
+    }
+
+    @Test
+    public void TestTurnLeftRight() throws UnlandedRobotException {
+        Robot r2d2 = new Robot();
+        Robot c3po = new Robot();
+        Coordinates start = new Coordinates(5,5);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        when(random.nextInt(anyInt())).thenReturn(0);
+        c3po.land(start, ls);
+        c3po.turnRight();
+        Assert.assertEquals(Direction.EAST, c3po.getDirection());
+
+        r2d2.land(start, ls);
+        r2d2.turnLeft();
+        Assert.assertEquals(Direction.WEST, r2d2.getDirection());
+
+    }
+
+    //Test moveTo
+    @Test
+    public void TestMoveTo() throws InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate, UnlandedRobotException {
+        Battery duracell = mock(Battery.class);
+        Robot r2d2 = new Robot(1.0, duracell);
+        Coordinates start = new Coordinates(5,5);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        when(random.nextInt(anyInt())).thenReturn(0);
+        r2d2.land(start, ls);
+
+        when(duracell.canDeliver(anyDouble())).thenReturn(true);
+        r2d2.moveForward();
+        Assert.assertEquals(4, r2d2.getYposition(), 0);
+
+        when(duracell.canDeliver(anyDouble())).thenReturn(false);
+        exception.expect(InsufficientChargeException.class);
+        r2d2.moveForward();
+
+    }
+
+    //test computeRoadTo
+    @Test
+    public void TestComputeRoadTo1() throws UnlandedRobotException {
+        Robot r2d2 = new Robot();
+
+        exception.expect(UnlandedRobotException.class);
+        r2d2.computeRoadTo(new Coordinates(2,3));
+    }
+
+    @Test
+    public void TestComputeRoadTo2() throws UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, UndefinedRoadbookException, InaccessibleCoordinate {
+        Robot c3po = new Robot();
+        Coordinates start = new Coordinates(5,5);
+        Coordinates dest = new Coordinates(6,6);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        when(random.nextInt(anyInt())).thenReturn(0);
+        c3po.land(start, ls);
+        c3po.computeRoadTo(dest);
+        c3po.letsGo();
+
+        Assert.assertEquals(6,c3po.getXposition(),0);
+        Assert.assertEquals(6,c3po.getYposition(),0);
+        Assert.assertEquals(Direction.SOUTH,c3po.getDirection());
+
+
+    }
 
 }
