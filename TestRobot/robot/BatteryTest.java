@@ -37,7 +37,8 @@ public class BatteryTest {
         Battery batTest = new Battery();
 
         batTest.setUp();
-        for(int i=0; i <= 2; i++){
+        Thread.sleep(500);
+        for(int i=1; i <= 3; i++){
             Assert.assertEquals( 100 + 10*i, batTest.getChargeLevel(), 0);
             Thread.sleep(1000);
         }
