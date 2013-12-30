@@ -46,14 +46,17 @@ public class RobotTest {
     }
 
     @Test
-    public void TestGetXYDPosition2() throws UnlandedRobotException {
+    public void TestGetXYDPosition2() throws CannotLandHereException, UnlandedRobotException, LandSensorDefaillance {
         Robot c3po = new Robot();
         Coordinates start = new Coordinates(2,3);
-        Random random = new Random();
+        Random random = mock(Random.class);
         LandSensor ls = new LandSensor(random);
         int xPos;
         int yPos;
         Direction dir;
+
+        //il est nécessaire de mocker random pour éviter l'aterrissage sur un terrain infranchissable
+        when(random.nextInt(anyInt())).thenReturn(0);
 
         c3po.land(start,ls);
 
@@ -69,7 +72,7 @@ public class RobotTest {
 
     //Test moveForward
     @Test
-    public void TestMoveForward() throws UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
+    public void TestMoveForward() throws CannotLandHereException, UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
         Robot r2d2 = new Robot();
         Robot c3po = new Robot();
         Coordinates start = new Coordinates(5,5);
@@ -88,7 +91,7 @@ public class RobotTest {
 
     //Test moveBackward
     @Test
-    public void TestMoveBackward() throws UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
+    public void TestMoveBackward() throws CannotLandHereException, UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
         Robot r2d2 = new Robot();
         Robot c3po = new Robot();
         Coordinates start = new Coordinates(5,5);
@@ -115,7 +118,7 @@ public class RobotTest {
     }
 
     @Test
-    public void TestLetsGo2() throws UnlandedRobotException, UndefinedRoadbookException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
+    public void TestLetsGo2() throws CannotLandHereException, UnlandedRobotException, UndefinedRoadbookException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate {
         Robot r2d2 = new Robot();
         List<Instruction> lst = new ArrayList<Instruction>();
         lst.add(Instruction.FORWARD);
@@ -158,7 +161,7 @@ public class RobotTest {
     }
 
     @Test
-    public void TestTurnLeftRight() throws UnlandedRobotException {
+    public void TestTurnLeftRight() throws CannotLandHereException, UnlandedRobotException, LandSensorDefaillance {
         Robot r2d2 = new Robot();
         Robot c3po = new Robot();
         Coordinates start = new Coordinates(5,5);
@@ -178,7 +181,7 @@ public class RobotTest {
 
     //Test moveTo
     @Test
-    public void TestMoveTo() throws InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate, UnlandedRobotException {
+    public void TestMoveTo() throws CannotLandHereException, InsufficientChargeException, LandSensorDefaillance, InaccessibleCoordinate, UnlandedRobotException {
         Battery duracell = mock(Battery.class);
         Robot r2d2 = new Robot(1.0, duracell);
         Coordinates start = new Coordinates(5,5);
@@ -208,7 +211,7 @@ public class RobotTest {
     }
 
     @Test
-    public void TestComputeRoadTo2() throws UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, UndefinedRoadbookException, InaccessibleCoordinate {
+    public void TestComputeRoadTo2() throws CannotLandHereException, UnlandedRobotException, InsufficientChargeException, LandSensorDefaillance, UndefinedRoadbookException, InaccessibleCoordinate {
         Robot c3po = new Robot();
         Coordinates start = new Coordinates(5,5);
         Coordinates dest = new Coordinates(6,6);
@@ -224,6 +227,50 @@ public class RobotTest {
         Assert.assertEquals(6,c3po.getYposition(),0);
         Assert.assertEquals(Direction.SOUTH,c3po.getDirection());
 
+    }
+
+    @Test
+    public void testMoveToInaccessibleCoordinate() throws Exception {
+
+        Battery duracell = mock(Battery.class);
+        Robot r2d2 = new Robot(1.0, duracell);
+        Coordinates start = new Coordinates(5,5);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        //when(random.nextInt(anyInt())).thenReturn(4);
+        when(random.nextInt(anyInt())).thenReturn(0, 4);
+        r2d2.land(start, ls);
+
+        when(duracell.canDeliver(anyDouble())).thenReturn(true);
+
+        exception.expect(InaccessibleCoordinate.class);
+        r2d2.moveForward();
+        
+        //le robot ne doit pas avoir bougé
+        Assert.assertEquals(5, r2d2.getXposition(), 0);
+    }
+
+    /*
+        Le test précédent met en évidence le fait que le robot puisse atterrir
+        sur un terrain Infranchissable sans problème. Nous avons donc créé
+        une méthode permettant de vérifier la nature du terrain avant
+        l'atterrissage
+    */
+
+    @Test
+    public void testAterissageImpossible() throws Exception {
+
+        Robot r2d2 = new Robot();
+        Coordinates start = new Coordinates(5,5);
+        Random random = mock(Random.class);
+        LandSensor ls = new LandSensor(random);
+
+        //le point d'atterrissage est infranchissable
+        when(random.nextInt(anyInt())).thenReturn(4);
+
+        exception.expect(CannotLandHereException.class);
+        r2d2.land(start, ls);
 
     }
 

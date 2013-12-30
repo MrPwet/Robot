@@ -15,6 +15,18 @@ public class LandSensor {
         this.random = random;
     }
 
+    //empêche le robot d'atterir sur un terrain inaccessible
+    public boolean canLandOn(Coordinates coordinate) throws LandSensorDefaillance {
+        if (carte.get(coordinate)==null)
+            try {
+                carte.put(coordinate, Land.getLandByOrdinal(random.nextInt(Land.CountLand())));
+            } catch (TerrainNonRepertorieException e) {
+                throw new LandSensorDefaillance();
+            }
+        Land terrain = carte.get(coordinate);
+        return (terrain != Land.Infranchissable);
+    }
+
     public double getPointToPointEnergyCoefficient(Coordinates coordinate1, Coordinates coordinate2) throws LandSensorDefaillance, InaccessibleCoordinate {
         if (carte.get(coordinate1)==null)
             try {

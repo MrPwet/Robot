@@ -26,7 +26,9 @@ public class Robot {
         this.cells = cells;
     }
 
-    public void land(Coordinates landPosition, LandSensor sensor) {
+    public void land(Coordinates landPosition, LandSensor sensor) throws CannotLandHereException, LandSensorDefaillance {
+        if (!sensor.canLandOn(landPosition)) throw new CannotLandHereException();
+
         position = landPosition;
         direction = NORTH;
         isLanded = true;
