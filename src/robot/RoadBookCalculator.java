@@ -18,9 +18,19 @@ public class RoadBookCalculator {
         if (directionList.contains(direction)) {
             instructions.add(FORWARD);
             return calculateRoadBook(direction, MapTools.nextForwardPosition(position, direction), destination, instructions);
-        } else {
+        }
+        /*
+            La condition permet de savoir si le virage à droite permet de se
+            placer directement dans la bonne direction. Sinon, le virage a
+            gauche est utilisé.
+        */
+        else if(directionList.contains(MapTools.clockwise(direction))) {
             instructions.add(TURNRIGHT);
             return calculateRoadBook(MapTools.clockwise(direction), position, destination, instructions);
+        }
+        else {
+            instructions.add(TURNLEFT);
+            return calculateRoadBook(MapTools.counterclockwise(direction), position, destination, instructions);
         }
     }
 }
